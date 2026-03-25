@@ -89,3 +89,18 @@
   .footer__grid { grid-template-columns: 1fr; }
   .footer__bottom { flex-direction: column; gap: 4px; text-align: center; }
 }
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 0.88rem;
+  color: #d8f3dc;
+}
+
+.footer__love {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
