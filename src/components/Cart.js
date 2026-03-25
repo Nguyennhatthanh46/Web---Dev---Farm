@@ -3,6 +3,31 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import "./Cart.css";
 
+/* ── Bộ Icon SVG Đơn Sắc (Tạo cảm giác thủ công, tự nhiên) ── */
+const Icons = {
+  Cart: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+    </svg>
+  ),
+  Trash: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+    </svg>
+  ),
+  EmptyBasket: () => (
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m3.5 13 1.5 7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2l1.5-7"/><path d="M7.5 7 3.5 13M16.5 7l4 6M2 13h20"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+  ),
+  MapPin: () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+    </svg>
+  )
+};
+
 function fmt(n) {
   return n.toLocaleString("vi-VN") + "₫";
 }
@@ -18,8 +43,11 @@ export default function Cart() {
 
       <aside className={`cart-drawer ${isOpen ? "cart-drawer--open" : ""}`}>
         <div className="cart-header">
-          <h2 className="cart-title">🛒 Giỏ Hàng</h2>
-          <span className="cart-count">{totalItems} sản phẩm</span>
+          <div className="cart-title-wrapper">
+            <Icons.Cart />
+            <h2 className="cart-title">Giỏ hàng của bạn</h2>
+          </div>
+          <span className="cart-count">{totalItems} món</span>
           <button
             className="cart-close"
             onClick={() => dispatch({ type: "CLOSE" })}
@@ -31,14 +59,14 @@ export default function Cart() {
 
         {items.length === 0 ? (
           <div className="cart-empty">
-            <div className="cart-empty-icon">🧺</div>
-            <p>Giỏ hàng của bạn đang trống</p>
+            <Icons.EmptyBasket />
+            <p>Giỏ hàng chưa có sản phẩm nào</p>
             <Link
               to="/products"
-              className="btn btn-primary"
+              className="btn-shopping"
               onClick={() => dispatch({ type: "CLOSE" })}
             >
-              Mua Sắm Ngay
+              Tiếp tục mua sắm
             </Link>
           </div>
         ) : (
@@ -49,8 +77,10 @@ export default function Cart() {
                   <img src={item.image} alt={item.name} className="cart-item__img" />
                   <div className="cart-item__info">
                     <p className="cart-item__name">{item.name}</p>
-                    <p className="cart-item__origin">📍 {item.origin}</p>
-                    <p className="cart-item__price">{fmt(item.price)}/{item.unit}</p>
+                    <p className="cart-item__origin">
+                      <Icons.MapPin /> {item.origin}
+                    </p>
+                    <p className="cart-item__price">{fmt(item.price)} / {item.unit}</p>
                   </div>
                   <div className="cart-item__controls">
                     <div className="qty-control">
@@ -70,9 +100,9 @@ export default function Cart() {
                     <button
                       className="cart-item__remove"
                       onClick={() => dispatch({ type: "REMOVE", id: item.id })}
-                      aria-label="Xóa sản phẩm"
+                      title="Xóa khỏi giỏ"
                     >
-                      🗑️
+                      <Icons.Trash />
                     </button>
                   </div>
                 </li>
@@ -80,39 +110,42 @@ export default function Cart() {
             </ul>
 
             <div className="cart-footer">
-              {totalPrice < 500000 && (
-                <div className="cart-delivery-hint">
-                  🚚 Mua thêm {fmt(500000 - totalPrice)} để được <strong>miễn phí giao hàng</strong>!
-                  <div className="delivery-bar">
-                    <div
-                      className="delivery-bar__fill"
-                      style={{ width: `${Math.min((totalPrice / 500000) * 100, 100)}%` }}
-                    />
+              <div className="cart-summary-box">
+                {totalPrice < 500000 ? (
+                  <div className="cart-delivery-hint">
+                    <p>Mua thêm <strong>{fmt(500000 - totalPrice)}</strong> để được miễn phí giao hàng</p>
+                    <div className="delivery-bar">
+                      <div
+                        className="delivery-bar__fill"
+                        style={{ width: `${Math.min((totalPrice / 500000) * 100, 100)}%` }}
+                      />
+                    </div>
                   </div>
+                ) : (
+                  <div className="cart-delivery-hint cart-delivery-hint--achieved">
+                    Đơn hàng của bạn đã đủ điều kiện miễn phí vận chuyển!
+                  </div>
+                )}
+                
+                <div className="cart-total">
+                  <span>Tổng tiền thanh toán</span>
+                  <span className="cart-total__amount">{fmt(totalPrice)}</span>
                 </div>
-              )}
-              {totalPrice >= 500000 && (
-                <div className="cart-delivery-hint cart-delivery-hint--achieved">
-                  🎉 Bạn được <strong>miễn phí giao hàng</strong>!
-                </div>
-              )}
-              <div className="cart-total">
-                <span>Tổng cộng</span>
-                <span className="cart-total__amount">{fmt(totalPrice)}</span>
               </div>
+
               <Link
                 to="/checkout"
-                className="btn btn-primary"
-                style={{ width: "100%", justifyContent: "center", fontSize: "1.05rem", padding: "16px" }}
+                className="btn-checkout"
                 onClick={() => dispatch({ type: "CLOSE" })}
               >
-                Tiến Hành Thanh Toán →
+                Tiến hành thanh toán
               </Link>
+              
               <button
                 className="cart-clear"
                 onClick={() => dispatch({ type: "CLEAR" })}
               >
-                Xóa toàn bộ giỏ hàng
+                Xóa sạch giỏ hàng
               </button>
             </div>
           </>
