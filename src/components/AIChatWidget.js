@@ -1,211 +1,172 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./AIChatWidget.css";
 
-/* ── Static demo messages ── */
-const INITIAL_MESSAGES = [
-  {
-    id: 1,
-    role: "ai",
-    text: "Xin chào! Tôi là trợ lý AI của Rễ Tươi 🌿\nBạn muốn đăng bán nông sản? Hãy gửi ảnh sản phẩm để tôi phân tích và gợi ý giá nhé!",
-    time: "08:30",
-  },
-];
+/* ── Monochrome Icon System (Bảng Icon Đơn Sắc) ── */
+const Icons = {
+  Robot: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2a2 2 0 0 1 2 2c0 .28-.06.53-.16.75A7 7 0 0 1 21 11v1h1v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7h1v-1a7 7 0 0 1 7.16-6.25c-.1-.22-.16-.47-.16-.75a2 2 0 0 1 2-2m3 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+    </svg>
+  ),
+  Camera: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+    </svg>
+  ),
+  Send: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+    </svg>
+  ),
+  Check: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+  Tag: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+  )
+};
 
-/* ── Popup component ── */
+/* ── Optimized Listing Popup ── */
 function ListingPopup({ onClose, onConfirm }) {
   return (
     <div className="ai-popup-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="ai-popup">
         <div className="ai-popup__header">
-          <div className="ai-popup__icon">✅</div>
-          <h3 className="ai-popup__title">Phân Tích Hoàn Tất!</h3>
-          <p className="ai-popup__subtitle">AI đã nhận diện sản phẩm và gợi ý giá thị trường</p>
+          <div className="ai-popup__status-icon"><Icons.Check /></div>
+          <h3 className="ai-popup__title">Kết quả phân tích</h3>
+          <p className="ai-popup__subtitle">Dữ liệu được trích xuất từ thị trường thời gian thực</p>
         </div>
 
         <div className="ai-popup__body">
-          <div className="ai-popup__field">
-            <div className="ai-popup__field-label">
-              <span className="ai-popup__field-icon">🍊</span>
-              Tên sản phẩm
+          <div className="ai-popup__data-grid">
+            <div className="ai-popup__item">
+              <span className="ai-popup__label">Sản phẩm</span>
+              <span className="ai-popup__value">Cam sành</span>
             </div>
-            <div className="ai-popup__field-value">Cam sành</div>
-          </div>
-
-          <div className="ai-popup__field">
-            <div className="ai-popup__field-label">
-              <span className="ai-popup__field-icon">⚖️</span>
-              Số lượng
+            <div className="ai-popup__item">
+              <span className="ai-popup__label">Trọng lượng</span>
+              <span className="ai-popup__value">500 kg</span>
             </div>
-            <div className="ai-popup__field-value">500 kg</div>
-          </div>
-
-          <div className="ai-popup__field ai-popup__field--highlight">
-            <div className="ai-popup__field-label">
-              <span className="ai-popup__field-icon">💰</span>
-              Mức giá AI gợi ý
-            </div>
-            <div className="ai-popup__field-value ai-popup__price">
-              15.000₫<span className="ai-popup__unit">/kg</span>
+            <div className="ai-popup__item ai-popup__item--highlight">
+              <span className="ai-popup__label">Định giá đề xuất</span>
+              <span className="ai-popup__value">15.000₫/kg</span>
             </div>
           </div>
 
-          <div className="ai-popup__insight">
-            <span className="ai-popup__insight-icon">📊</span>
-            <span>Giá thị trường hiện tại: <strong>13.000 – 17.000₫/kg</strong> — Mức gợi ý đang ở phân khúc cạnh tranh tốt.</span>
+          <div className="ai-popup__insight-box">
+            <Icons.Tag />
+            <p>Biên độ giá thị trường hiện tại: <strong>13k - 17k</strong>. Mức giá của bạn có tính cạnh tranh cao.</p>
           </div>
         </div>
 
         <div className="ai-popup__actions">
-          <button className="ai-popup__confirm" onClick={onConfirm}>
-            🛒 Xác nhận đăng lên chợ
-          </button>
-          <button className="ai-popup__edit" onClick={onClose}>
-            ✏️ Chỉnh sửa thông tin
-          </button>
+          <button className="ai-popup__confirm" onClick={onConfirm}>Xác nhận niêm yết</button>
+          <button className="ai-popup__edit" onClick={onClose}>Điều chỉnh</button>
         </div>
       </div>
     </div>
   );
 }
 
-/* ── Main widget ── */
+/* ── Main AI Chat Component ── */
 export default function AIChatWidget() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      role: "ai",
+      text: "Hệ thống AI Rễ Tươi đã sẵn sàng. Vui lòng cung cấp hình ảnh nông sản để bắt đầu quá trình định giá tự động.",
+      time: "08:30",
+    }
+  ]);
   const [input, setInput] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
-  const [previewImg, setPreviewImg] = useState(null);
   const fileRef = useRef();
   const bottomRef = useRef();
-  const inputRef = useRef();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, analyzing]);
 
-  function now() {
-    return new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-  }
+  const now = () => new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
 
-  function sendText(e) {
+  const handleSendText = (e) => {
     e.preventDefault();
-    const text = input.trim();
-    if (!text) return;
-    const msg = { id: Date.now(), role: "user", text, time: now() };
-    setMessages(m => [...m, msg]);
+    if (!input.trim()) return;
+    
+    const userMsg = { id: Date.now(), role: "user", text: input, time: now() };
+    setMessages(prev => [...prev, userMsg]);
     setInput("");
 
-    // Fake AI reply
     setTimeout(() => {
-      setMessages(m => [...m, {
+      setMessages(prev => [...prev, {
         id: Date.now() + 1,
         role: "ai",
-        text: "Cảm ơn bạn! Để định giá chính xác hơn, vui lòng gửi ảnh sản phẩm bằng nút 📷 bên dưới nhé.",
+        text: "Để thực hiện phân tích thị trường chính xác, tôi cần dữ liệu hình ảnh trực quan. Vui lòng tải lên ảnh sản phẩm.",
         time: now(),
       }]);
     }, 1000);
-    inputRef.current?.focus();
-  }
+  };
 
-  function handleImageChange(e) {
+  const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
-    setPreviewImg(url);
 
-    // User sends image
-    const userMsg = {
+    setMessages(prev => [...prev, {
       id: Date.now(),
       role: "user",
       image: url,
-      text: "📷 Đã gửi ảnh sản phẩm",
+      text: "Đã tải lên tệp tin hình ảnh.",
       time: now(),
-    };
-    setMessages(m => [...m, userMsg]);
-    e.target.value = "";
+    }]);
 
-    // Trigger analysis
     setAnalyzing(true);
     setTimeout(() => {
       setAnalyzing(false);
-      const aiMsg = {
+      setMessages(prev => [...prev, {
         id: Date.now() + 2,
         role: "ai",
-        text: "✅ Tôi đã phân tích xong ảnh của bạn!\n🍊 Nhận diện: **Cam sành**\n⚖️ Ước tính: ~500 kg\n💰 Giá gợi ý: 15.000₫/kg\n\nBấm bên dưới để xem chi tiết và đăng bán!",
+        text: "Phân tích hoàn tất. Nhận diện: Cam sành | Khối lượng: ~500kg. Vui lòng kiểm tra báo cáo chi tiết bên dưới.",
         time: now(),
         hasAction: true,
-      };
-      setMessages(m => [...m, aiMsg]);
+      }]);
     }, 3000);
-  }
-
-  function handleConfirm() {
-    setShowPopup(false);
-    setSuccessToast(true);
-    setMessages(m => [...m, {
-      id: Date.now(),
-      role: "ai",
-      text: "🎉 Tuyệt vời! Sản phẩm **Cam sành** của bạn đã được đăng lên chợ thành công!\nMã đơn: #FR-2024-8847\nChúc bạn bán hàng thuận lợi! 🌿",
-      time: now(),
-    }]);
-    setTimeout(() => setSuccessToast(false), 4000);
-  }
+  };
 
   return (
     <>
-      {/* ── Floating button ── */}
       {!open && (
-        <button className="ai-fab" onClick={() => setOpen(true)} aria-label="Mở chat AI">
-          <span className="ai-fab__icon">🤖</span>
-          <span className="ai-fab__label">AI Định Giá</span>
-          <span className="ai-fab__ping" />
+        <button className="ai-fab" onClick={() => setOpen(true)}>
+          <Icons.Robot />
+          <span className="ai-fab__label">AI Pricing</span>
         </button>
       )}
 
-      {/* ── Chat panel ── */}
       <div className={`ai-chat ${open ? "ai-chat--open" : ""}`}>
-        {/* Header */}
         <div className="ai-chat__header">
-          <div className="ai-chat__avatar">
-            <span>🤖</span>
-            <span className="ai-chat__online-dot" />
-          </div>
+          <div className="ai-chat__avatar"><Icons.Robot /></div>
           <div className="ai-chat__header-info">
-            <span className="ai-chat__name">AI Trợ Lý Nông Sản</span>
-            <span className="ai-chat__status">● Đang hoạt động</span>
+            <span className="ai-chat__name">AI Engine v3.0</span>
+            <span className="ai-chat__status">● System Online</span>
           </div>
-          <div className="ai-chat__header-actions">
-            <button className="ai-chat__icon-btn" title="Gọi điện">📞</button>
-            <button className="ai-chat__close-btn" onClick={() => setOpen(false)}>✕</button>
-          </div>
+          <button className="ai-chat__close-btn" onClick={() => setOpen(false)}>✕</button>
         </div>
 
-        {/* Messages */}
         <div className="ai-chat__messages">
           {messages.map(msg => (
             <div key={msg.id} className={`ai-bubble-row ai-bubble-row--${msg.role}`}>
-              {msg.role === "ai" && (
-                <div className="ai-bubble-avatar">🤖</div>
-              )}
+              {msg.role === "ai" && <div className="ai-bubble-avatar"><Icons.Robot /></div>}
               <div className={`ai-bubble ai-bubble--${msg.role}`}>
-                {msg.image && (
-                  <img src={msg.image} alt="Ảnh sản phẩm" className="ai-bubble__image" />
-                )}
-                <p className="ai-bubble__text">
-                  {msg.text.split("\n").map((line, i) => (
-                    <span key={i}>
-                      {line.replace(/\*\*(.*?)\*\*/g, "$1")}<br />
-                    </span>
-                  ))}
-                </p>
+                {msg.image && <img src={msg.image} alt="Upload" className="ai-bubble__image" />}
+                <p className="ai-bubble__text">{msg.text}</p>
                 {msg.hasAction && (
-                  <button
-                    className="ai-bubble__action-btn"
-                    onClick={() => setShowPopup(true)}
-                  >
-                    📋 Xem chi tiết & Đăng bán
+                  <button className="ai-bubble__action-btn" onClick={() => setShowPopup(true)}>
+                    Mở báo cáo chi tiết
                   </button>
                 )}
                 <span className="ai-bubble__time">{msg.time}</span>
@@ -213,89 +174,42 @@ export default function AIChatWidget() {
             </div>
           ))}
 
-          {/* Analyzing bubble */}
           {analyzing && (
             <div className="ai-bubble-row ai-bubble-row--ai">
-              <div className="ai-bubble-avatar">🤖</div>
-              <div className="ai-bubble ai-bubble--ai ai-bubble--analyzing">
+              <div className="ai-bubble-avatar"><Icons.Robot /></div>
+              <div className="ai-bubble ai-bubble--ai">
                 <div className="ai-analyzing">
-                  <span className="ai-analyzing__icon">🔍</span>
-                  <span className="ai-analyzing__text">Đang phân tích hình ảnh...</span>
-                  <div className="ai-analyzing__dots">
-                    <span /><span /><span />
-                  </div>
-                </div>
-                <div className="ai-analyzing__bar">
-                  <div className="ai-analyzing__progress" />
+                  <span className="ai-analyzing__text">Processing visual data...</span>
                 </div>
               </div>
             </div>
           )}
-
           <div ref={bottomRef} />
         </div>
 
-        {/* Input area */}
         <div className="ai-chat__footer">
-          {/* Camera / Image attach button — prominent */}
-          <div className="ai-chat__attach-area">
-            <button
-              className="ai-chat__camera-btn"
-              onClick={() => fileRef.current?.click()}
-              title="Đính kèm hình ảnh sản phẩm"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <circle cx="12" cy="13" r="4"/>
-              </svg>
-              <span>Đính kèm ảnh</span>
-            </button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleImageChange}
-            />
-          </div>
+          <button className="ai-chat__camera-btn" onClick={() => fileRef.current?.click()}>
+            <Icons.Camera />
+            <span>Đính kèm dữ liệu ảnh</span>
+          </button>
+          <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleImageChange} />
 
-          <form className="ai-chat__input-row" onSubmit={sendText}>
-            <input
-              ref={inputRef}
-              className="ai-chat__input"
-              type="text"
-              placeholder="Nhắn tin cho AI trợ lý..."
-              value={input}
-              onChange={e => setInput(e.target.value)}
+          <form className="ai-chat__input-row" onSubmit={handleSendText}>
+            <input 
+               className="ai-chat__input" 
+               placeholder="Nhập yêu cầu tại đây..." 
+               value={input} 
+               onChange={e => setInput(e.target.value)} 
             />
-            <button
-              className="ai-chat__send-btn"
-              type="submit"
-              disabled={!input.trim()}
-              aria-label="Gửi"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-              </svg>
+            <button className="ai-chat__send-btn" type="submit" disabled={!input.trim()}>
+              <Icons.Send />
             </button>
           </form>
         </div>
       </div>
 
-      {/* ── Listing popup ── */}
-      {showPopup && (
-        <ListingPopup
-          onClose={() => setShowPopup(false)}
-          onConfirm={handleConfirm}
-        />
-      )}
-
-      {/* ── Success toast ── */}
-      {successToast && (
-        <div className="ai-success-toast">
-          🎉 Đã đăng lên chợ thành công!
-        </div>
-      )}
+      {showPopup && <ListingPopup onClose={() => setShowPopup(false)} onConfirm={() => { setShowPopup(false); setSuccessToast(true); setTimeout(() => setSuccessToast(false), 3000); }} />}
+      {successToast && <div className="ai-success-toast">Hệ thống: Niêm yết sản phẩm thành công.</div>}
     </>
   );
 }
