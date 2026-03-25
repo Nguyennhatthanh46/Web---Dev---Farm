@@ -1,294 +1,169 @@
 /* =============================================
-   LoginModal — FreshRoots
+   LoginModal — RễTươi (Phiên bản thực tế)
    ============================================= */
 
 .lm-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(27, 67, 50, 0.4); /* Xanh thẫm mờ, tạo chiều sâu tự nhiên */
+  backdrop-filter: blur(4px);
   z-index: 9000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  animation: lm-fade-in 0.2s ease;
-}
-
-@keyframes lm-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
 }
 
 .lm-card {
-  background: var(--white);
-  border-radius: 24px;
+  background: #fffdfa; /* Trắng kem giấy, tạo cảm giác mộc mạc */
+  border-radius: 12px; /* Bo góc vừa phải, không quá tròn kiểu app công nghệ */
   width: 100%;
-  max-width: 420px;
-  box-shadow: 0 24px 64px rgba(27, 67, 50, 0.25), 0 4px 16px rgba(0,0,0,0.1);
+  max-width: 400px;
   position: relative;
   overflow: hidden;
-  animation: lm-slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0ede9;
+  animation: lm-slide-up 0.3s ease-out;
 }
 
 @keyframes lm-slide-up {
-  from { opacity: 0; transform: translateY(40px) scale(0.96); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Top green banner */
+/* Banner trên cùng: Đơn giản hóa, bỏ lá bay rườm rà */
 .lm-card__top {
-  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-main) 60%, var(--green-mid) 100%);
-  padding: 32px 28px 28px;
+  background: #1b4332; /* Xanh thẫm đặc trưng */
+  padding: 40px 28px 32px;
   text-align: center;
-  position: relative;
-  overflow: hidden;
+  border-bottom: 3px solid #ffb703; /* Đường gờ màu vàng nghệ điểm nhấn */
 }
 
-.lm-card__leaf {
-  position: absolute;
-  font-size: 40px;
-  opacity: 0.15;
-  user-select: none;
-  pointer-events: none;
-}
-.lm-card__leaf--1 { top: -10px; left: -8px; transform: rotate(-30deg); font-size: 60px; }
-.lm-card__leaf--2 { top: 10px; right: 10px; transform: rotate(20deg); font-size: 48px; }
-.lm-card__leaf--3 { bottom: -5px; left: 40%; font-size: 36px; }
-
-.lm-card__brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-
-.lm-card__brand-icon { font-size: 28px; }
 .lm-card__brand-text {
-  font-family: var(--font-display);
-  font-size: 1.7rem;
-  color: var(--white);
-  letter-spacing: -0.5px;
+  font-family: inherit;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
 }
-.lm-card__brand-text strong { font-weight: 900; }
 
 .lm-card__tagline {
-  color: rgba(255,255,255,0.75);
-  font-size: 0.82rem;
-  font-family: var(--font-body);
+  color: #95d5b2;
+  font-size: 0.85rem;
+  margin-top: 8px;
 }
 
-/* Tabs */
+/* Tabs: Chuyển sang phong cách tối giản */
 .lm-tabs {
   display: flex;
-  margin: 0 24px;
-  border-bottom: 2px solid var(--green-pale);
-  margin-bottom: 0;
+  background: #f8f7f4;
+  border-bottom: 1px solid #eeece8;
 }
 
 .lm-tab {
   flex: 1;
-  padding: 14px 0;
+  padding: 16px 0;
   background: none;
   border: none;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-light);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #64748b;
   cursor: pointer;
-  transition: var(--transition);
-  position: relative;
-}
-
-.lm-tab::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0; right: 0;
-  height: 2px;
-  background: var(--green-main);
-  transform: scaleX(0);
-  transition: transform 0.25s ease;
+  transition: all 0.2s;
 }
 
 .lm-tab--active {
-  color: var(--green-dark);
+  color: #1b4332;
+  background: #fffdfa;
+  border-bottom: 2px solid #1b4332;
 }
 
-.lm-tab--active::after {
-  transform: scaleX(1);
-}
-
-/* Form */
+/* Form & Input: Chỉnh lại cho giống biểu mẫu thực tế */
 .lm-form {
-  padding: 20px 24px 24px;
+  padding: 30px 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-}
-
-.lm-field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  gap: 18px;
 }
 
 .lm-label {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: var(--text-mid);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.lm-input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.lm-input-icon {
-  position: absolute;
-  left: 13px;
-  font-size: 15px;
-  pointer-events: none;
-  z-index: 1;
+  color: #374151;
+  margin-bottom: 4px;
 }
 
 .lm-input {
   width: 100%;
-  padding: 11px 14px 11px 38px;
-  border: 1.5px solid #e2e8e4;
-  border-radius: 10px;
-  font-family: var(--font-body);
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   font-size: 0.95rem;
-  color: var(--text-dark);
-  background: #f9fdf9;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #1f2937;
+  background: #ffffff;
   outline: none;
+  transition: border-color 0.2s;
 }
 
 .lm-input:focus {
-  border-color: var(--green-mid);
-  box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.12);
-  background: var(--white);
+  border-color: #2d6a4f;
+  box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.1);
 }
 
-.lm-input--error {
-  border-color: var(--red) !important;
-  box-shadow: 0 0 0 3px rgba(231, 111, 81, 0.12) !important;
-}
-
-.lm-error {
-  font-size: 0.78rem;
-  color: var(--red);
-  font-weight: 600;
-}
-
-.lm-forgot {
-  text-align: right;
-  margin-top: -6px;
-}
-.lm-forgot a {
-  font-size: 0.82rem;
-  color: var(--green-main);
-  text-decoration: none;
-  font-weight: 600;
-}
-.lm-forgot a:hover { text-decoration: underline; }
-
+/* Nút Submit: Chắc chắn, màu xanh nông nghiệp */
 .lm-submit {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, var(--green-main), var(--green-mid));
-  color: var(--white);
+  background: #2d6a4f;
+  color: #ffffff;
   border: none;
-  border-radius: 12px;
-  font-family: var(--font-body);
+  border-radius: 6px;
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.35);
+  transition: background 0.2s;
+  margin-top: 10px;
+}
+
+.lm-submit:hover:not(:disabled) {
+  background: #1b4332;
+}
+
+/* Social Buttons: Bớt bóng bẩy */
+.lm-social-btn {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 50px;
-}
-.lm-submit:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--green-dark), var(--green-main));
-  box-shadow: 0 6px 20px rgba(27, 67, 50, 0.4);
-  transform: translateY(-1px);
-}
-.lm-submit:disabled { opacity: 0.7; cursor: not-allowed; }
-
-.lm-spinner {
-  width: 20px; height: 20px;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: lm-spin 0.7s linear infinite;
-}
-@keyframes lm-spin { to { transform: rotate(360deg); } }
-
-.lm-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-light);
-  font-size: 0.8rem;
-  margin: 2px 0;
-}
-.lm-divider::before, .lm-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #e2e8e4;
-}
-
-.lm-socials {
-  display: flex;
-  gap: 10px;
-}
-
-.lm-social-btn {
-  flex: 1;
-  padding: 10px;
-  border: 1.5px solid #e2e8e4;
-  border-radius: 10px;
-  background: var(--white);
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  font-weight: 700;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  transition: var(--transition);
-  color: var(--text-dark);
 }
+
 .lm-social-btn:hover {
-  border-color: var(--green-light);
-  background: var(--green-pale);
+  background: #f9fafb;
+  border-color: #9ca3af;
 }
 
 .lm-close {
   position: absolute;
-  top: 12px; right: 14px;
-  background: rgba(255,255,255,0.25);
+  top: 15px; right: 15px;
+  background: rgba(0, 0, 0, 0.2);
   border: none;
-  color: var(--white);
-  width: 30px; height: 30px;
+  color: #ffffff;
+  width: 28px; height: 28px;
   border-radius: 50%;
-  font-size: 14px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s;
 }
-.lm-close:hover { background: rgba(255,255,255,0.45); }
+
+.lm-close:hover { background: rgba(0, 0, 0, 0.4); }
